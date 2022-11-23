@@ -3,7 +3,7 @@ const multiparty = require('multiparty');
 const Sentry = require("@sentry/node");
 var logCount = 1
 
-exports.expressError = (req, res) => {
+const expressError = (req, res) => {
   return new Promise((resolve, reject) => {
     const result = validationResult(req).formatWith(({ location, msg, param, value, nestedErrors }) => (msg));
     if (!result.isEmpty()) {
@@ -13,16 +13,29 @@ exports.expressError = (req, res) => {
     resolve(true)
   })
 }
+exports.expressError = expressError
 
 exports.errorHandler = (err, req, res, next) => {
-  console.log(`=== Error Log.No.${logCount++}::${new Date()} ===`)
-  console.log(err)
   err = err ? err : {}
   let { msg, status, message } = err;
-  res.status(status || 500).json({
-    error: true,
-    msg: msg || message || "Internal server error",
-  });
+  if (!status) {
+    console.log(`=== Error Log.No.${logCount++}::${new Date()} ===`)
+    console.log(err)
+  }
+  let resData;
+  if (status) {
+    resData = {
+      error: true,
+      msg: msg || "Something went wrong!",
+    }
+  } else {
+    resData = {
+      error: true,
+      msg: msg || "Something went wrong!",
+      serverMsg: message
+    }
+  }
+  res.status(status || 500).json(resData);
   if (!status)
     next(err)
   else
@@ -56,3 +69,12 @@ exports.ParseFormData = async (req, res, next) => {
     errorHandler(error, req, res, next);
   }
 }
+
+exports.ValidateTryCatch = (controller) => async (req, res, next) => {
+  try {
+    await expressError(req, res)
+    await controller(req, res, next);
+  } catch (error) {
+    return next(error);
+  }
+};

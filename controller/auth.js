@@ -1,89 +1,93 @@
 const bcrypt = require('bcrypt');
-const {pool,client} = require('../db');
-const { expressError } = require('../util');
+const Model = require('../db/model');
 const jwt = require('jsonwebtoken');
 
-
 exports.SignUp = async (req, res, next) => {
-  try {
-    await expressError(req, res)
-    let { name, email, password, description } = req.body
-    let emailResult = await pool.query("SELECT email FROM users WHERE email = $1", [email])
-    if (emailResult && emailResult.rowCount) {
-      throw { error: true, msg: "Email already used", status: 400 }
-    }
-    const password_salt = bcrypt.hashSync(password, parseInt(process.env.BCRYPT_SALT));
-    let result = await pool.query("INSERT INTO users(name,email,password_salt,description) VALUES($1,$2,$3,$4) RETURNING *", [name, email, password_salt, description])
-    if (result && result.rowCount) {
-      res.json({
-        error: false,
-        msg: "Sign Up successfully",
-        result
-      })
-      res.end()
-      return
-    } else {
-      throw { error: true, msg: "Sign Up failed", status: 400 }
-    }
-  } catch (error) {
-    next(error)
+  let { name, email, password, role_id } = req.body
+
+  // let emailResult = await Model.User.findOne({ where: { email } });
+  // if (emailResult) {
+  //   throw { error: true, msg: "Email already used.", status: 400 }
+  // }
+  const password_salt = bcrypt.hashSync(password, parseInt(process.env.BCRYPT_SALT));
+
+  let userData = await Model.User.create({ name, email, role_id, encrypt_psw: password_salt });
+
+  let { user_id } = userData
+  let resData = { user_id, name, email, role_id }
+
+  if (role_id === 2 && userData) {
+    let restaurant = await Model.Restaurant.create({ user_id });
+    let { restaurant_id } = restaurant
+    await Model.User.update({ restaurant_id }, {
+      where: {
+        user_id
+      }
+    });
+    resData["restaurant_id"] = restaurant_id
+  }
+
+  if (userData) {
+    res.json({
+      error: false,
+      msg: "Sign Up successfully.",
+      data: resData
+    })
+    res.end()
+    return
+  } else {
+    throw { error: true, msg: "Sign Up failed.", status: 400 }
   }
 };
 
 exports.SignIn = async (req, res, next) => {
-  try {
-    await expressError(req, res)
-    let { email, password } = req.body
-    let emailResult = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+  let { email, password } = req.body
+  let userData = await Model.User.findOne({ where: { email } });
 
-    if (emailResult && emailResult.rowCount === 0) {
-      throw { error: true, msg: "Email not found", status: 400 }
-    }
+  if (!userData) {
+    throw { error: true, msg: "Email not found", status: 400 }
+  }
+  userData = userData && userData.dataValues ? userData.dataValues : {}
 
-    let user = emailResult && emailResult.rows && emailResult.rows[0] ? emailResult.rows[0] : {}
-    if (!bcrypt.compareSync(password, user.password_salt)) {
-      throw { error: true, msg: "Wrong Password", status: 400 }
-    }
+  let { user_id, name, encrypt_psw, role_id, restaurant_id } = userData
 
-    delete user.password_salt
+  if (!bcrypt.compareSync(password, encrypt_psw)) {
+    throw { error: true, msg: "Wrong Password", status: 400 }
+  }
 
-    let token = jwt.sign(user, process.env.JWT_PRIVATE_KEY);
-    if (token) {
-      res.json({
-        error: false,
-        msg: "Sign In successfully",
-        data: { ...user, token }
-      })
-      res.end()
-      return
-    } else {
-      throw { error: true, msg: "Sign Up failed", status: 400 }
-    }
-  } catch (error) {
-    next(error)
+  let token = jwt.sign({ user_id, name, email, role_id, restaurant_id }, process.env.JWT_PRIVATE_KEY);
+
+  if (token) {
+    res.json({
+      error: false,
+      msg: "Sign In successfully",
+      data: { user_id, name, email, role_id, restaurant_id },
+      token
+    })
+    res.end()
+    return
+  } else {
+    throw { error: true, msg: "Sign In failed", status: 400 }
   }
 };
 
 
 exports.SignOut = async (req, res, next) => {
-  try {
-    await expressError(req, res)
-    let { token } = req.headers
-    if (!token) {
-      throw { error: true, msg: "Token did not found", status: 400 }
-    }
-    var user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-    if (user) {
-      res.json({
-        error: false,
-        msg: "Sign Out successfully"
-      })
-      res.end()
-      return
-    } else {
-      throw { error: true, msg: "User Didn't sign in", status: 400 }
-    }
-  } catch (error) {
-    next(error)
+  let { token } = req.headers
+  if (!token) {
+    throw { error: true, msg: "Token did not found", status: 400 }
+  }
+
+  var user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+
+  if (user) {
+    res.json({
+      error: false,
+      msg: "Sign Out successfully"
+    })
+    res.end()
+    return
+  } else {
+    throw { error: true, msg: "User Didn't sign in", status: 400 }
   }
 };
