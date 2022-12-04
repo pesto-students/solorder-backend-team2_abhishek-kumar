@@ -9,7 +9,7 @@ const cookieParser = require("cookie-parser");
 const Sentry = require("@sentry/node");
 require("@sentry/tracing");
 
-const sequelize = require("./db")
+const {sequelize} = require("./db")
 const Model = require("./db/model");
 const DefineAssociation = require("./db/associations");
 

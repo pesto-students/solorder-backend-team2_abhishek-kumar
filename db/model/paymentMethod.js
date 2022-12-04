@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("..");
+const {sequelize} = require("..");
 
 const PaymentMethod = sequelize.define("plan", {
   paymentMethod_id: {

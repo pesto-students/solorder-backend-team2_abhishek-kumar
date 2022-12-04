@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("..");
+const {sequelize} = require("..");
 
 const Restaurant = sequelize.define("restaurant", {
   restaurant_id: {
@@ -31,6 +31,10 @@ const Restaurant = sequelize.define("restaurant", {
     // allowNull: false,
   },
   longitude: {
+    type: DataTypes.INTEGER,
+    // allowNull: false,
+  },
+  deliveryRange: {
     type: DataTypes.INTEGER,
     // allowNull: false,
   },

@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("..");
+const {sequelize} = require("..");
 
 const OrderStatus = sequelize.define("plan", {
   orderStatus_Id: {

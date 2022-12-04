@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("..");
+const {sequelize} = require("..");
 
 const User = sequelize.define("user", {
   user_id: {
@@ -28,7 +28,11 @@ const User = sequelize.define("user", {
   role_id: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
-  }
+  },
+  defaultAddressId: {
+    type: DataTypes.INTEGER,
+    defaultValue: null,
+  },
 });
 
 module.exports = User;
