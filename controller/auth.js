@@ -49,19 +49,19 @@ exports.SignIn = async (req, res, next) => {
   }
   userData = userData && userData.dataValues ? userData.dataValues : {}
 
-  let { user_id, name, encrypt_psw, role_id, restaurant_id } = userData
+  let { user_id, name, encrypt_psw, role_id, restaurant_id, defaultAddressId } = userData
 
   if (!bcrypt.compareSync(password, encrypt_psw)) {
     throw { error: true, msg: "Wrong Password", status: 400 }
   }
 
-  let token = jwt.sign({ user_id, name, email, role_id, restaurant_id }, process.env.JWT_PRIVATE_KEY);
+  let token = jwt.sign({ user_id, name, email, role_id, restaurant_id, defaultAddressId }, process.env.JWT_PRIVATE_KEY);
 
   if (token) {
     res.json({
       error: false,
       msg: "Sign In successfully",
-      data: { user_id, name, email, role_id, restaurant_id },
+      data: { user_id, name, email, role_id, restaurant_id, defaultAddressId },
       token
     })
     res.end()
@@ -89,5 +89,19 @@ exports.SignOut = async (req, res, next) => {
     return
   } else {
     throw { error: true, msg: "User Didn't sign in", status: 400 }
+  }
+};
+
+exports.Authenticate = async (req, res, next) => {
+  let { token } = req.headers
+  if (!token) {
+    throw { error: true, msg: "Unauthorized access", status: 401 }
+  }
+  var user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+  if (user) {
+    req['user'] = user
+    return next()
+  } else {
+    throw { error: true, msg: "Authentication failed", status: 400 }
   }
 };

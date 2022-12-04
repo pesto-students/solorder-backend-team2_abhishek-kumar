@@ -5,7 +5,17 @@
 // module.exports = {pool,client};
 
 const { Sequelize } = require('sequelize');
+const cloudinary = require("cloudinary").v2;
 
-const sequelize = new Sequelize(process.env.PG_CONNECT_URL)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-module.exports = sequelize;
+const sequelize = new Sequelize(process.env.PG_CONNECT_URL, {
+  // disable logging; default: console.log
+  logging: false
+})
+
+module.exports = { sequelize, cloudinary };

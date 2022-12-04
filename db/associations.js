@@ -39,10 +39,10 @@ function DefineAssociation() {
     foreignKey: 'user_id',
     onDelete: 'CASCADE',
   })
-  Model.Orders.belongsTo(Model.Address, {
-    foreignKey: 'address_id',
-    onDelete: 'SET NULL',
-  })
+  // Model.Orders.belongsTo(Model.Address, {
+  //   foreignKey: 'address_id',
+  //   onDelete: 'SET NULL',
+  // })
   Model.Orders.belongsTo(Model.PersonDelivery, {
     foreignKey: 'address_id',
     onDelete: 'SET NULL',

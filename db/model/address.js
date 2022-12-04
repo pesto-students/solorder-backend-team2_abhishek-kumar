@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("..");
+const {sequelize} = require("..");
 
 const Address = sequelize.define("address", {
   address_id: {
@@ -27,11 +27,11 @@ const Address = sequelize.define("address", {
     MAX_VALUE: 999999
   },
   latitude: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL,
     allowNull: false,
   },
   longitude: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL,
     allowNull: false,
   },
 });

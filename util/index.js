@@ -15,7 +15,7 @@ const expressError = (req, res) => {
 }
 exports.expressError = expressError
 
-exports.errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
   err = err ? err : {}
   let { msg, status, message } = err;
   if (!status) {
@@ -36,11 +36,9 @@ exports.errorHandler = (err, req, res, next) => {
     }
   }
   res.status(status || 500).json(resData);
-  if (!status)
-    next(err)
-  else
-    res.end()
+  res.end()
 };
+exports.errorHandler = errorHandler
 
 exports.sentryErrorHandler = (err, req, res, next) => {
   const transaction = Sentry.startTransaction({
@@ -55,26 +53,25 @@ exports.sentryErrorHandler = (err, req, res, next) => {
 };
 
 exports.ParseFormData = async (req, res, next) => {
-  try {
-    var form = new multiparty.Form();
-    let formData = await new Promise((resolve, reject) => {
-      form.parse(req, function (err, fields, files) {
-        if (err)
-          reject({ error: true, msg: err.message, status: 400 })
-        resolve({ fields, files })
-      });
-    })
-    next(formData);
-  } catch (error) {
-    errorHandler(error, req, res, next);
-  }
+  var form = new multiparty.Form();
+  let formData = await new Promise((resolve, reject) => {
+    form.parse(req, function (err, fields, files) {
+      if (err)
+        reject({ error: true, msg: err.message, status: 400 })
+      resolve({ fields, files })
+    });
+  })
+  req.formData = formData
+  next();
 }
 
-exports.ValidateTryCatch = (controller) => async (req, res, next) => {
+exports.ValidateTryCatch = (controller) => async (...args) => {
+  let next = args.find((v) => (["next","paramCallback"].includes(v?.name)))
   try {
-    await expressError(req, res)
-    await controller(req, res, next);
+    !next && console.log("Can't Detect next func");
+    await expressError(...args);
+    await controller(...args);
   } catch (error) {
-    return next(error);
+    next ? next(error) : errorHandler(error, ...args)
   }
 };
