@@ -1,9 +1,9 @@
 var router = require("express").Router();
 const { Authenticate } = require("../controller/auth");
-const { ProfileDetails, updateProfile, addAddress, getAddress, getAddressById, updateAddress, deleteAddress } = require("../controller/dashboard");
+const { ProfileDetails, updateProfile, addAddress, getAddress, getAddressById, updateAddress, deleteAddress, AddDeliveryPerson, getDeliveryPersonList, DeleteDeliveryPerson } = require("../controller/dashboard");
 const { ValidateTryCatch } = require("../util");
 const { AuthValidate } = require("../validator/auth");
-const { updateProfileValidate, AddressValidate, deleteAddressValidate } = require("../validator/dashboard");
+const { updateProfileValidate, AddressValidate, deleteAddressValidate, AddDeliveryPersonValidate, DeleteDeliveryPersonValidate } = require("../validator/dashboard");
 
 // Get address details if address_id is there in params
 router.param("address_id", ValidateTryCatch(getAddressById));
@@ -25,5 +25,14 @@ router.put("/updateAddress/:address_id", AuthValidate, ValidateTryCatch(Authenti
 
 // Delete address
 router.delete("/deleteAddress/:address_id", AuthValidate, ValidateTryCatch(Authenticate), deleteAddressValidate, ValidateTryCatch(deleteAddress));
+
+// Add Delivery Persons
+router.post("/deliveryperson", AuthValidate, ValidateTryCatch(Authenticate), AddDeliveryPersonValidate, ValidateTryCatch(AddDeliveryPerson));
+
+// get Delivery Persons list
+router.get("/deliveryperson", AuthValidate, ValidateTryCatch(Authenticate), ValidateTryCatch(getDeliveryPersonList));
+
+// Delete Delivery Persons
+router.delete("/deliveryperson/:person_id", AuthValidate, ValidateTryCatch(Authenticate), DeleteDeliveryPersonValidate, ValidateTryCatch(DeleteDeliveryPerson));
 
 module.exports = router;

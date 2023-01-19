@@ -3,11 +3,13 @@ const bcrypt = require('bcrypt');
 
 exports.ProfileDetails = async (req, res, next) => {
   let { user } = req
+  let userData = await Model.User.findOne({ where: { user_id: user?.user_id } });
+  let { defaultAddressId, email, name, restaurant_id, role_id, user_id } = userData
   if (user) {
     res.json({
       error: false,
       msg: "User data fetched successfully.",
-      data: user
+      data: { defaultAddressId, email, name, restaurant_id, role_id, user_id }
     })
   } else {
     throw { error: true, msg: "User not found.", status: 400 }
@@ -45,7 +47,7 @@ exports.updateProfile = async (req, res, next) => {
     }
   }
 
-  if (email) {
+  if (email && (userEmail !== email)) {
     let isUser = await Model.User.findOne({ where: { email } });
     if (isUser)
       throw { error: true, msg: "Email already used.", status: 400 }
@@ -62,7 +64,7 @@ exports.updateProfile = async (req, res, next) => {
       user_id
     }
   });
-
+  
   if (userData) {
     res.json({
       error: false,
@@ -101,13 +103,13 @@ exports.addAddress = async (req, res, next) => {
 };
 
 exports.getAddress = async (req, res, next) => {
-  let { user} = req
+  let { user } = req
   user = user ? user : {}
   let { user_id } = user
 
   let addressList = await Model.Address.findAll({
     where: { user_id },
-    attributes: ['address_id','address','state','city','pincode','latitude','longitude']
+    attributes: ['address_id', 'address', 'state', 'city', 'pincode', 'latitude', 'longitude']
   })
 
   res.json({
@@ -182,10 +184,10 @@ exports.deleteAddress = async (req, res, next) => {
 };
 
 exports.getAddressById = async (req, res, next, id) => {
-  let address = await Model.Address.findOne({ 
+  let address = await Model.Address.findOne({
     where: { address_id: id },
-    attributes: ['user_id','address_id','address','state','city','pincode','latitude','longitude']
-   })
+    attributes: ['user_id', 'address_id', 'address', 'state', 'city', 'pincode', 'latitude', 'longitude']
+  })
   if (address && address.dataValues) {
     req['addressData'] = address.dataValues
     next();
@@ -193,3 +195,80 @@ exports.getAddressById = async (req, res, next, id) => {
     throw { error: true, msg: "address not found.", status: 400 }
   }
 };
+
+exports.AddDeliveryPerson = async (req, res, next) => {
+  let { user, body } = req
+  body = body ? body : {}
+  user = user ? user : {}
+  let { restaurant_id } = user
+  let {
+    name,
+    phoneNo,
+    vehicalName,
+    vehicalNumber
+  } = body
+
+  if (!restaurant_id) {
+    res.status(400).json({
+      error: true,
+      msg: "Error while Adding Delivery Person."
+    })
+  } else {
+    let addressData = await Model.PersonDelivery.create({
+      name,
+      phoneNo:String(phoneNo),
+      vehicalName,
+      vehicalNumber,
+      restaurant_id
+    })
+    res.json({
+      error: false,
+      msg: "Delivery Person Addedd successfully."
+    })
+  }
+}
+
+exports.DeleteDeliveryPerson = async (req, res, next) => {
+  let { user, params } = req
+  user = user ? user : {}
+  params = params ? params : {}
+  let { restaurant_id } = user
+  let { person_id } = params
+
+  if (!restaurant_id) {
+    res.status(400).json({
+      error: true,
+      msg: "Error while Deleting Delivery Person."
+    })
+  } else {
+    await Model.PersonDelivery.destroy({
+      where: { restaurant_id, person_id }
+    })
+    res.json({
+      error: false,
+      msg: "Delivery deleted successfully.",
+    })
+  }
+}
+
+exports.getDeliveryPersonList = async (req, res, next) => {
+  let { user } = req
+  user = user ? user : {}
+  let { restaurant_id } = user
+
+  if (!restaurant_id) {
+    res.status(400).json({
+      error: true,
+      msg: "Error while Fetching Delivery Person."
+    })
+  } else {
+    let deliveryPersonList = await Model.PersonDelivery.findAll({
+      where: { restaurant_id }
+    })
+    res.json({
+      error: false,
+      msg: "Delivery Person Fetched successfully.",
+      data: deliveryPersonList
+    })
+  }
+}

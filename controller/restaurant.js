@@ -1,5 +1,8 @@
-const { cloudinary } = require('../db');
+const { cloudinary, sequelize } = require('../db');
 const Model = require('../db/model');
+const { Op } = require("sequelize");
+const { Sequelize } = require('sequelize');
+const { refreshRestaurant, refreshUser } = require('../helper/socketEmitter');
 
 exports.getRestaurantById = async (req, res, next, id) => {
   let restaurant = await Model.Restaurant.findOne({ where: { restaurant_id: id } })
@@ -34,7 +37,7 @@ exports.UpdateRestaurant = async (req, res, next) => {
     throw { error: true, msg: "Unauthorized restaurant.", status: 400 }
   }
 
-  let allowedKey = new Set(["name", "state", "city", "pincode", "latitude", "longitude", "deliveryRange", "deliveryTime", "costForTwo", "galaryImgs", "purchaseDate", "daysToExpire", "stepCompleted", "cuisines", "isActive", "rating", "plan_id"]);
+  let allowedKey = new Set(["name", "state", "city", "pincode", "latitude", "longitude", "deliveryRange", "deliveryTime", "costForTwo", "galaryImgs", "purchaseDate", "daysToExpire", "stepCompleted", "cuisines", "isActive", "rating", "plan_id", "address", "recipt_id"]);
 
   let restaurantDataBody = {}
 
@@ -64,11 +67,11 @@ exports.getRestaurantDetails = async (req, res, next) => {
   let { user_id } = user
   let { user_id: resUserId } = restaurant
 
-  if (user_id !== resUserId) {
-    throw { error: true, msg: "Unauthorized restaurant.", status: 400 }
-  }
+  // if (user_id !== resUserId) {
+  //   throw { error: true, msg: "Unauthorized restaurant.", status: 400 }
+  // }
 
-  let allowedKey = new Set(["name", "state", "city", "pincode", "latitude", "longitude", "deliveryRange", "deliveryTime", "costForTwo", "galaryImgs", "purchaseDate", "daysToExpire", "stepCompleted", "cuisines", "isActive", "rating", "plan_id"]);
+  let allowedKey = new Set(["restaurant_id", "address", "name", "state", "city", "pincode", "latitude", "longitude", "deliveryRange", "deliveryTime", "costForTwo", "galaryImgs", "purchaseDate", "daysToExpire", "stepCompleted", "cuisines", "isActive", "rating", "plan_id", "ratingList", "avgRating"]);
 
   let restaurantData = {}
 
@@ -102,7 +105,7 @@ exports.updateCategoryDetails = async (req, res, next) => {
 
   if (category_id) {
     let category = await Model.MenuCategory.findOne({ where: { category_id } });
-    if (category && category.dataValues) {category = category.dataValues}
+    if (category && category.dataValues) { category = category.dataValues }
     let { restaurant_id: resrestaurantId } = category
     if (resrestaurantId === restaurant_id) {
       await Model.MenuCategory.update({ name }, {
@@ -219,14 +222,14 @@ exports.deleteItem = async (req, res, next) => {
 };
 
 exports.getMenu = async (req, res, next) => {
-  let { user } = req
+  let { user, restaurant } = req
   user = user ? user : {}
-
-  let { restaurant_id } = user
+  restaurant = restaurant ? restaurant : {}
+  let { restaurant_id } = restaurant
 
   const result = await Model.MenuCategory.findAll({
     where: { restaurant_id },
-    attributes: ['category_id', 'name']
+    attributes: ['category_id', 'name', "restaurant_id"]
   });
 
   let menu = result?.length ? result.map(async (cat) => {
@@ -369,3 +372,259 @@ exports.deleteImage = async (req, res, next) => {
     data: imgId
   })
 }
+
+exports.setRating = async (req, res, next) => {
+  let { user, restaurant, body } = req;
+  user = user ? user : {};
+  restaurant = restaurant ? restaurant : {};
+  body = body ? body : {};
+
+  let { restaurant_id, ratingList: RatingList } = restaurant;
+  let { user_id } = user;
+  let { ratingValue } = body;
+
+  let avgRating = 0;
+  let ratingList = RatingList;
+  ratingList[String(user_id)] = Number(ratingValue);
+  let ratingArr = Object.values(ratingList)
+  ratingArr.forEach((v) => { avgRating = avgRating + v });
+  avgRating = parseFloat(avgRating / ratingArr.length);
+  avgRating = (parseInt(avgRating) < avgRating) ? avgRating.toFixed(1) : parseInt(avgRating);
+
+  await Model.Restaurant.update({ avgRating, ratingList }, {
+    where: {
+      restaurant_id
+    }
+  });
+
+  res.json({
+    error: false,
+    msg: "Rating Updated successfully.",
+  })
+}
+
+exports.setRating = async (req, res, next) => {
+  let { user, restaurant, body } = req;
+  user = user ? user : {};
+  restaurant = restaurant ? restaurant : {};
+  body = body ? body : {};
+
+  let { restaurant_id, ratingList: RatingList } = restaurant;
+  let { user_id } = user;
+  let { ratingValue } = body;
+
+  let avgRating = 0;
+  let ratingList = RatingList;
+  ratingList[String(user_id)] = Number(ratingValue);
+  let ratingArr = Object.values(ratingList)
+  ratingArr.forEach((v) => { avgRating = avgRating + v });
+  avgRating = parseFloat(avgRating / ratingArr.length);
+  avgRating = (parseInt(avgRating) < avgRating) ? avgRating.toFixed(1) : parseInt(avgRating);
+
+  await Model.Restaurant.update({ avgRating, ratingList }, {
+    where: {
+      restaurant_id
+    }
+  });
+
+  res.json({
+    error: false,
+    msg: "Rating Updated successfully.",
+  })
+}
+
+exports.getRestaurantList = async (req, res, next) => {
+  let { user, body } = req;
+  user = user ? user : {};
+  body = body ? body : {};
+
+  let { user_id } = user;
+  let { filterType, pincode, searchKey } = body;
+
+  let deliveryTime = { order: [['deliveryTime', 'ASC']] }
+  let rating = { order: [['avgRating', 'DESC']] }
+  let costLowToHigh = { order: [['costForTwo', 'DESC']] }
+  let costHighToLow = { order: [['costForTwo', 'ASC']] }
+
+  filterQuery = {}
+  if (filterType === 2)
+    filterQuery = deliveryTime
+  else if (filterType === 3)
+    filterQuery = rating
+  else if (filterType === 4)
+    filterQuery = costHighToLow
+  else if (filterType === 5)
+    filterQuery = costLowToHigh
+
+  let search = {}
+
+  if (searchKey) {
+    search = {
+      [Op.or]: [
+        {
+          name: {
+            [Op.iLike]: `%${searchKey}%`
+          }
+        },
+        {
+          cuisines: {
+            [Op.contains]: searchKey
+          }
+        }
+      ]
+    }
+  }
+  // Project.findAll({ offset: 5, limit: 5 }); ---> use this for pagination
+  let restaurantList = await Model.Restaurant.findAll({
+    where: {
+      pincode,
+      ...search,
+      daysToExpire: {
+        [Op.gt]: 0
+      }
+    },
+    ...filterQuery,
+    attributes: ['restaurant_id', 'name', "deliveryTime", "galaryImgs", "costForTwo", "avgRating", "cuisines"]
+  })
+
+  res.json({
+    error: false,
+    msg: "Restaurant List fetched successfully.",
+    data: restaurantList
+  })
+}
+
+exports.CreateOrder = async (req, res, next) => {
+  let { body, user } = req
+  body = body ? body : {}
+  user = user ? user : {}
+
+  let { user_id } = user
+  let { restaurant_id, totalCost, items, recipt_id, orderTime, orderAddress } = body
+
+  await Model.Orders.create({ user_id, restaurant_id, totalCost, items, recipt_id, orderTime, orderAddress });
+  refreshRestaurant(restaurant_id)
+  res.json({
+    error: false,
+    msg: "Order Placed successfully.",
+  })
+};
+
+exports.UpdateOrder = async (req, res, next) => {
+  let { body, user } = req
+  body = body ? body : {}
+  user = user ? user : {}
+
+  let { user_id, restaurant_id } = user
+
+  let allowedKey = new Set(["estimateDeliveryTime", "deliveryTime", "orderStatus_Id", "deliveryPerson"]);
+  let { order_id, ...restBody } = body
+  let orderDataBody = {}
+
+  if (restBody && Object.keys(restBody).length) {
+    Object.keys(restBody).forEach((key) => {
+      if (allowedKey.has(key)) orderDataBody[key] = body[key];
+    })
+  }
+
+  await Model.Orders.update({ ...orderDataBody }, {
+    where: {
+      order_id
+    }
+  });
+
+  let orderDetail = await Model.Orders.findOne({
+    where: {
+      order_id
+    }
+  })
+
+  if (orderDetail && orderDetail?.user_id)
+    refreshUser(orderDetail?.user_id)
+
+  res.json({
+    error: false,
+    msg: "Order details updated successfully.",
+  })
+};
+
+exports.getActiveOrders = async (req, res, next) => {
+  let { user } = req
+  user = user ? user : {}
+
+  let { user_id, restaurant_id } = user
+
+  let orderList = []
+
+  if (restaurant_id) {
+    orderList = await Model.Orders.findAll({
+      where: {
+        restaurant_id,
+        orderStatus_Id: {
+          [Op.lt]: 5
+        }
+      },
+      include:{ 
+        model: Model.User,
+      },
+    });
+  } else if(user_id) {
+    orderList = await Model.Orders.findAll({
+      where: {
+        user_id,
+        orderStatus_Id: {
+          [Op.lt]: 5
+        }
+      },
+      include:{ 
+        model: Model.User,
+      }
+    }); 
+  }
+  res.json({
+    error: false,
+    msg: "Order List fetched successfully.",
+    data: orderList
+  })
+};
+
+exports.getPastOrders = async (req, res, next) => {
+  let { user } = req
+  user = user ? user : {}
+
+  let { user_id, restaurant_id } = user
+
+  let orderList = []
+
+  if (restaurant_id) {
+    orderList = await Model.Orders.findAll({
+      where: {
+        restaurant_id,
+        orderStatus_Id: {
+          [Op.eq]: 5
+        }
+      },
+      include:{ 
+        model: Model.User,
+      }
+    });
+  } else if (user_id) {
+    orderList = await Model.Orders.findAll({
+      where: {
+        user_id,
+        orderStatus_Id: {
+          [Op.eq]: 5
+        }
+      },
+      include:{ 
+        model: Model.User,
+      }
+    });
+  }
+
+  res.json({
+    error: false,
+    msg: "Order List fetched successfully.",
+    data: orderList
+  })
+};

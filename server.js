@@ -5,6 +5,12 @@ const server = require("http").createServer(app);
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 const Sentry = require("@sentry/node");
 require("@sentry/tracing");
@@ -15,6 +21,7 @@ const DefineAssociation = require("./db/associations");
 
 const { errorHandler, sentryErrorHandler } = require("./util");
 const allOtherRoutes = require("./routes");
+const { SocketHelper } = require("./helper/socketEmitter");
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -65,12 +72,14 @@ process.on("STOP", function(){
 })
 
 // Server running check
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
   try {
     DefineAssociation()
     // await sequelize.sync({ force: true });
     await sequelize.sync({ alter: true });
     // await sequelize.authenticate();
+    // Socket implementation
+    SocketHelper(io);
     console.log("=========================================");
     console.log(`Server listening at http://localhost:${PORT}`);
     console.log("=========================================");

@@ -9,44 +9,50 @@ const Orders = sequelize.define("orders", {
     unique: true,
     primaryKey: true
   },
-  itemIds: {
-    type: DataTypes.JSON,
-    allowNull: false,
-  },
-  itemTotal: {
+  user_id:  {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
   },
-  deliveryFees: {
+  restaurant_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  taxAndCharges: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
   },
   totalCost: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
   },
   estimateDeliveryTime: {
-    type: DataTypes.DATE,
-    allowNull: false,
+    type: DataTypes.INTEGER,
+    // allowNull: false,
   },
-  transactionId: {
+  recipt_id: {
     type: DataTypes.STRING,
+    // allowNull: false,
   },
   orderTime: {
-    type: DataTypes.DATE,
-    allowNull: false,
+    type: DataTypes.STRING,
+    // allowNull: false,
   },
-  deliveryime: {
-    type: DataTypes.DATE,
-    allowNull: false,
+  deliveryTime: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+  },
+  items: {
+    type: DataTypes.JSONB,
+    // allowNull: false,
   },
   orderAddress: {
-    type: DataTypes.JSON,
-    allowNull: false,
+    type: DataTypes.JSONB,
+    // allowNull: false,
+  },
+  deliveryPerson: {
+    type: DataTypes.JSONB,
+    // allowNull: false,
+  },
+  orderStatus_Id:{
+    type: DataTypes.INTEGER,
+    defaultValue: 1,
+    // allowNull: false,
   }
 });
 
