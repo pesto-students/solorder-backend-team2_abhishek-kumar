@@ -9,12 +9,16 @@ const PersonDelivery = sequelize.define("personDelivery", {
     unique: true,
     primaryKey: true
   },
+  restaurant_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   phoneNo: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   vehicalName: {
@@ -22,7 +26,7 @@ const PersonDelivery = sequelize.define("personDelivery", {
     allowNull: false,
   },
   vehicalNumber: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
 });

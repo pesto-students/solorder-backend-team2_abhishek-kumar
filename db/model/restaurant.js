@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const {sequelize} = require("..");
+const { sequelize } = require("..");
 
 const Restaurant = sequelize.define("restaurant", {
   restaurant_id: {
@@ -10,6 +10,10 @@ const Restaurant = sequelize.define("restaurant", {
     primaryKey: true
   },
   name: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+  },
+  address: {
     type: DataTypes.STRING,
     // allowNull: false,
   },
@@ -27,11 +31,11 @@ const Restaurant = sequelize.define("restaurant", {
     MAX_VALUE: 999999
   },
   latitude: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL,
     // allowNull: false,
   },
   longitude: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL,
     // allowNull: false,
   },
   deliveryRange: {
@@ -39,7 +43,7 @@ const Restaurant = sequelize.define("restaurant", {
     // allowNull: false,
   },
   deliveryTime: {
-    type: DataTypes.TIME,
+    type: DataTypes.INTEGER,
     // allowNull: false,
   },
   costForTwo: {
@@ -50,7 +54,7 @@ const Restaurant = sequelize.define("restaurant", {
     type: DataTypes.JSON
   },
   purchaseDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     // allowNull: false,
   },
   daysToExpire: {
@@ -59,18 +63,39 @@ const Restaurant = sequelize.define("restaurant", {
   },
   stepCompleted: {
     type: DataTypes.INTEGER,
+    defaultValue: 0,
     // allowNull: false,
   },
   cuisines: {
-    type: DataTypes.JSON,
+    type: DataTypes.JSONB,
     // allowNull: false,
   },
   isActive: {
     type: DataTypes.BOOLEAN,
     // allowNull: false,
+    defaultValue:true,
   },
-  rating: {
-    type: DataTypes.JSON
+  ratingList: {
+    type: DataTypes.JSON,
+    defaultValue: {}
+  },
+  avgRating: {
+    type: DataTypes.DECIMAL,
+    defaultValue: 0
+  },
+  recipt_id: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+    // autoIncrement: true,
+    unique: true,
+    // primaryKey: true
+  },
+  plan_id: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+    // autoIncrement: true,
+    // unique: true,
+    // primaryKey: true
   },
 });
 

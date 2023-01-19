@@ -14,15 +14,41 @@ exports.AddressValidate = [
   body('state').trim().exists().withMessage("state does not exist.").isString().withMessage("state must be string."),
   body('city').trim().exists().withMessage("city does not exist.").isString().withMessage("city must be string."),
   body('pincode').exists().isInt().withMessage("Enter Valid pincode.").custom((value) => {
-    if ((value > 9999) && (value <= 99999))
-      throw new Error('pincode must be 5 digit.');
-    else
+    if ((value > 99999) && (value <= 999999))
       return true
+    else
+      throw new Error('pincode must be 6 digit.');
   }),
-  body('latitude').exists().isDecimal().withMessage("Enter valid latitude."),
-  body('longitude').exists().isDecimal().withMessage("Enter valid longitude."),
+  body('latitude').exists().custom((value) => {
+    if ((Number(value) >= -90) && (Number(value) <= 90))
+      return true
+    else
+      throw new Error('Enter Valid Latitude.');
+  }),
+  body('longitude').exists().custom((value) => {
+    if ((Number(value) >= -180) && (Number(value) <= 180))
+      return true
+    else
+      throw new Error('Enter Valid Longitude.');
+  }),
 ]
 
 exports.deleteAddressValidate = [
   param('address_id').exists().withMessage("address_id does not exist.").isInt().withMessage("Invalid address_id.")
+]
+
+exports.AddDeliveryPersonValidate = [
+  body('name').trim().exists().withMessage("address does not exist.").isString().withMessage("name must be string."),
+  body('phoneNo').trim().exists().withMessage("phoneNo does not exist.").isInt().withMessage("state must be string.").custom((value) => {
+    if ((Number(value) >= 1000000000) && (Number(value) <= 9999999999))
+      return true
+    else
+      throw new Error('Enter Valid phoneNo.');
+  }),
+  body('vehicalName').trim().exists().withMessage("vehicalName does not exist.").isString().withMessage("vehicalName must be string."),
+  body('vehicalNumber').trim().exists().withMessage("vehicalNumber does not exist.").isString().withMessage("vehicalNumber must be string.")
+]
+
+exports.DeleteDeliveryPersonValidate = [
+  param('person_id').trim().exists().withMessage("person_id does not exist.").isInt().withMessage("person_id must be string.")
 ]

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const {sequelize} = require("..");
 
-const OrderStatus = sequelize.define("plan", {
+const OrderStatus = sequelize.define("orderStatus", {
   orderStatus_Id: {
     type: DataTypes.INTEGER,
     allowNull: false,
