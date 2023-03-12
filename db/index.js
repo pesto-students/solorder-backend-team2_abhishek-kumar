@@ -15,7 +15,13 @@ cloudinary.config({
 
 const sequelize = new Sequelize(process.env.PG_CONNECT_URL, {
   // disable logging; default: console.log
-  logging: false
+  logging: false,
+  dialect: 'postgres',
+  protocol: 'postgres',
+  dialectOptions: {
+    ssl: true,
+    native:true
+  }
 })
 
 module.exports = { sequelize, cloudinary };
