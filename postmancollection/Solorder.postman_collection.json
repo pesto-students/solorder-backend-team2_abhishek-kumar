@@ -103,6 +103,87 @@
 					"response": []
 				},
 				{
+					"name": "send or resend otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveenmohanty3@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/sendotp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"sendotp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveen987@mailinator.com\",\n    \"otp\": 7844\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/validateotp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"validateotp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password via OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveen987@mailinator.com\",\n    \"otp\":7844,\n    \"password\":\"987654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/updatePasswordViaOtp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"updatePasswordViaOtp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "signout",
 					"request": {
 						"method": "GET",

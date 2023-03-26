@@ -23,3 +23,28 @@ exports.SignInValidate = [
 exports.AuthValidate = [
   header('token').exists().withMessage("token must exists.").isJWT().withMessage("Invalid user token.")
 ]
+
+exports.SendOtpValidate = [
+  body('email').exists().withMessage("email not present").notEmpty().withMessage("email cannot be empty").isEmail().withMessage("Enter Valid Email.")
+]
+
+exports.ValidateOtpValidate = [
+  body('email').exists().withMessage("email not present").notEmpty().withMessage("email cannot be empty").isEmail().withMessage("Enter Valid Email."),
+  body('otp').exists().isInt().withMessage("Enter Valid OTP.").custom((value) => {
+    if ((value > 999) && (value <= 9999))
+      return true
+    else
+      throw new Error('Invalid OTP.');
+  }),
+]
+
+exports.UpdatePasswordViaOtpValidate = [
+  body('email').exists().withMessage("email not present").notEmpty().withMessage("email cannot be empty").isEmail().withMessage("Enter Valid Email."),
+  body('otp').exists().isInt().withMessage("Enter Valid OTP.").custom((value) => {
+    if ((value > 999) && (value <= 9999))
+      return true
+    else
+      throw new Error('Invalid OTP.');
+  }),
+  body('password').exists().withMessage("password not present").notEmpty().withMessage("password cannot be empty").isLength({ min: 8 }).withMessage("Minimum password length is 8."),
+]

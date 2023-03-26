@@ -25,6 +25,7 @@
     "i": "^0.3.7",
     "jsonwebtoken": "^8.5.1",
     "multiparty": "^4.2.3",
+    "nodemailer": "^6.9.1",
     "npm": "^9.2.0",
     "pg": "^8.8.0",
     "razorpay": "^2.8.4",

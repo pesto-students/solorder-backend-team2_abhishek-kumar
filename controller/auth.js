@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const Model = require('../db/model');
 const jwt = require('jsonwebtoken');
+const { otpTamplet, generateOTP } = require('../helper/otpTemplet')
+const nodemailer = require("nodemailer");
 
 exports.SignUp = async (req, res, next) => {
   let { name, email, password, role_id } = req.body
@@ -104,4 +106,127 @@ exports.Authenticate = async (req, res, next) => {
   } else {
     throw { error: true, msg: "Authentication failed", status: 400 }
   }
+};
+
+exports.SendOtp = async (req, res, next) => {
+  let { email } = req.body
+  let userData = await Model.User.findOne({ where: { email } });
+
+  if (!userData) {
+    throw { error: true, msg: "Email not found", status: 400 }
+  }
+
+  let otp = generateOTP( )
+  let isOtpPresent = await Model.OtpToEmail.findOne({ where: { email } });
+  let otpData = null
+
+  if (isOtpPresent) {
+    otpData = await Model.OtpToEmail.update({ otp, isVerified: false }, {
+      where: {
+        email
+      }
+    });
+  } else {
+    otpData = await Model.OtpToEmail.create({ email, otp, isVerified: false });
+  }
+
+  if (otpData) {
+
+    // create reusable transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      host: process.env.SENDINBLUE_HOST,
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.SENDINBLUE_USER, // generated ethereal user
+        pass: process.env.SENDINBLUE_PASS // generated ethereal password
+      }
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: '"Solorder" <naveenmohanty3@gmail.com>', // sender address
+      to: email, // list of receivers
+      subject: "Reset password OTP", // Subject line
+      text: `Dear ${userData?.name || ""}, Your OTP is: ${otp || ""}`, // plain text body
+      html: otpTamplet(userData?.name, otp), // html body
+    });
+
+    if (info.messageId) {
+      res.json({
+        error: false,
+        msg: "OTP send successfully to your email."
+      })
+    } else {
+      res.status(400).json({
+        error: true,
+        msg: "Unable to send OTP."
+      })
+    }
+  } else {
+    res.status(400).json({
+      error: true,
+      msg: "Unable to send OTP."
+    })
+  }
+  res.end()
+};
+
+exports.ValidateOtp = async (req, res, next) => {
+  let { email, otp } = req.body
+  let otpData = await Model.OtpToEmail.findOne({ where: { email } });
+
+  if (otpData?.otp === otp) {
+    if (otpData?.isVerified === false) {
+      await Model.OtpToEmail.update({ isVerified: true }, {
+        where: {
+          email
+        }
+      });
+      res.json({
+        error: false,
+        msg: "OTP verified successfully."
+      })
+    } else {
+      res.status(400).json({
+        error: true,
+        msg: "Invalid OTP."
+      })
+    }
+  } else {
+    res.status(400).json({
+      error: true,
+      msg: "Invalid OTP."
+    })
+  }
+  res.end()
+};
+
+exports.UpdatePasswordViaOtp = async (req, res, next) => {
+  let { email, password, otp } = req.body
+  let otpData = await Model.OtpToEmail.findOne({ where: { email } });
+  let userData = await Model.User.findOne({ where: { email } });
+  if ((otpData?.otp !== otp) || (otpData?.isVerified === false)) {
+    res.status(400).json({
+      error: true,
+      msg: "Unable to update password."
+    })
+  } else if (userData) {
+    const password_salt = bcrypt.hashSync(password, parseInt(process.env.BCRYPT_SALT));
+    await Model.User.update({ encrypt_psw: password_salt }, {
+      where: {
+        user_id: userData?.user_id || null
+      }
+    });
+    res.json({
+      error: false,
+      msg: "Password Updated successfully."
+    })
+  } else {
+    res.status(400).json({
+      error: true,
+      msg: "Unable to update password."
+    })
+  }
+  res.end()
 };

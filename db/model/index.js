@@ -8,6 +8,7 @@ const Restaurant = require("./restaurant");
 const User = require("./user");
 const Transaction = require("./transaction");
 const OrderStatus = require("./orderStatus");
+const OtpToEmail = require("./otpToEmail");
 
 const Model = {
   Address,
@@ -20,6 +21,7 @@ const Model = {
   Orders,
   Transaction,
   OrderStatus,
+  OtpToEmail,
 }
 
 module.exports = Model
