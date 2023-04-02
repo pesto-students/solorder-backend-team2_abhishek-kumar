@@ -1,0 +1,1146 @@
+{
+	"info": {
+		"_postman_id": "e6b2054d-214e-4d06-9e37-1f20af92172c",
+		"name": "Solorder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20755036"
+	},
+	"item": [
+		{
+			"name": "Test",
+			"item": [
+				{
+					"name": "Test Server",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/test",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sentry Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/sentrytest",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sentrytest"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Test Name\",\n    \"email\":\"testname@test.com\",\n    \"password\":\"12345678\",\n    \"role_id\":2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/signup",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"testname1@test.com\",\n    \"password\":\"87654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/signin",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send or resend otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveenmohanty3@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/sendotp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"sendotp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveen987@mailinator.com\",\n    \"otp\": 7844\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/validateotp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"validateotp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password via OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"naveen987@mailinator.com\",\n    \"otp\":7844,\n    \"password\":\"987654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/updatePasswordViaOtp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"updatePasswordViaOtp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signout",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/auth/signout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "restaurant",
+			"item": [
+				{
+					"name": "Update Restaurant details",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"name\": \"Zaika\",\n        \"address\": null,\n        \"state\": \"Odisha\",\n        \"city\": \"balasore\",\n        \"pincode\": \"756056\",\n        \"latitude\": null,\n        \"longitude\": null,\n        \"deliveryRange\": 6,\n        \"deliveryTime\": null,\n        \"costForTwo\": null,\n        \"galaryImgs\": null,\n        \"purchaseDate\": null,\n        \"daysToExpire\": null,\n        \"stepCompleted\": null,\n        \"cuisines\": null,\n        \"isActive\": null,\n        \"rating\": null,\n        \"plan_id\": null\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/updateDetails/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"updateDetails",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Restaurant Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Chinese12123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/category/1?category_id=1&isNew=0",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"category",
+								"1"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "1"
+								},
+								{
+									"key": "isNew",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Restaurant Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Chicken Tandoore\",\n    \"description\":\"Cheicken is tandoore\",\n    \"price\":300,\n    \"isVeg\":false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/item/1/1?isNew=1&item_id=",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"item",
+								"1",
+								"1"
+							],
+							"query": [
+								{
+									"key": "isNew",
+									"value": "1"
+								},
+								{
+									"key": "item_id",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "item_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurant Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/details/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"details",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurant Menu",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/menu/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"menu",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurant Category Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/category/4?category_id=3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"category",
+								"4"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurant Item Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/item/1/2?item_id=4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"item",
+								"1",
+								"2"
+							],
+							"query": [
+								{
+									"key": "item_id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Restaurant img",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							},
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"type": "file",
+									"src": "/home/bidonhomes/Desktop/propertyImgs/6232323232.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/image/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"image",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Default Restaurant Image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"imgId\":\"vn35eyslme88fxeahsm2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/defaultImage/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"defaultImage",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Restaurant Image",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/deleteImage/1/d6yngcyq4ptix02rhuf3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"deleteImage",
+								"1",
+								"d6yngcyq4ptix02rhuf3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rating",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ratingValue\":3.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/updateRating/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"updateRating",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurent List",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filterType\":1,\n    \"pincode\":756001,\n    \"searchKey\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/restaurantList",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"restaurantList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"restaurant_id\": 2,\n    \"totalCost\": 400,\n    \"items\": [\n        {\n            \"itemData\": {\n                \"item_id\": 2,\n                \"name\": \"Chilly Chicken\",\n                \"description\": \"jhgjkgjkghjk\",\n                \"price\": 200,\n                \"isVeg\": false,\n                \"rating\": null,\n                \"category_id\": 2\n            },\n            \"itemCount\": 2\n        }\n    ],\n    \"recipt_id\": \"plan_2_2_2_17/1/2023_23:12:55\",\n    \"orderTime\": \"Tue Jan 17 2023 23:01:08 GMT+0530 (India Standard Time)\",\n    \"orderAddress\": {\n        \"address_id\": 1,\n        \"address\": \"jghjkjk\",\n        \"state\": \"Odisha\",\n        \"city\": \"Srikanthapur, Baleswar\",\n        \"pincode\": 756001,\n        \"latitude\": \"21.13410000\",\n        \"longitude\": \"85.63650000\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/createorder",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"createorder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"order_id\": 2,\n    \"estimateDeliveryTime\": 20,\n    \"orderStatus_Id\": 2,\n    \"deliveryPerson\": {\n        \"person_id\": 1,\n        \"restaurant_id\": 2,\n        \"name\": \"Ram Mohan\",\n        \"phoneNo\": \"7878787878\",\n        \"vehicalName\": \"Activa 125\",\n        \"vehicalNumber\": \"OD 01YU 7878\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/restaurant/updateorder",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"updateorder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get active order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/activeorders",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"activeorders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get past order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/restaurant/pastorders",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"restaurant",
+								"pastorders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dashboard",
+			"item": [
+				{
+					"name": "Get User Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/dashboard/profile",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Addresses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/dashboard/addresses",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete address",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/dashboard/deleteAddress/6",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"deleteAddress",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Details",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"\",\n    \"email\":\"\",\n    \"password\":\"12345678\",\n    \"newPassword\":\"87654321\",\n    \"confirmPassword\":\"87654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/dashboard/updateProfile",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"updateProfile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User Address",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\":\"Sale tax colony2\",\n    \"state\":\"Odisha\",\n    \"city\":\"Balasore\",\n    \"pincode\":756056,\n    \"latitude\":21.493358,\n    \"longitude\":86.913479\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/dashboard/addAddress",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"addAddress"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Address",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\":\"Sale tax colony22\",\n    \"state\":\"Odisha\",\n    \"city\":\"Balasore\",\n    \"pincode\":756056,\n    \"latitude\":21.493358,\n    \"longitude\":86.913479\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/dashboard/updateAddress/5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"updateAddress",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Delivery Person",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Ram Sharma\",\n    \"phoneNo\":9937895218,\n    \"vehicalName\":\"Hero Delux\",\n    \"vehicalNumber\":\"OD 01ED 1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/dashboard/deliveryperson",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"deliveryperson"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Delivery Person List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/dashboard/deliveryperson",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"deliveryperson"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Delivery Person",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/dashboard/deliveryperson/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"dashboard",
+								"deliveryperson",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "location",
+			"item": [
+				{
+					"name": "zipcode",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/location/zipcode/756056",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"location",
+								"zipcode",
+								"756056"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/location/search?search=zilla&lat=21.48980000&lng=86.91700000",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"location",
+								"search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "zilla"
+								},
+								{
+									"key": "lat",
+									"value": "21.48980000"
+								},
+								{
+									"key": "lng",
+									"value": "86.91700000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment",
+			"item": [
+				{
+					"name": "Get Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 50000,\n  \"receipt\": \"order_11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/payment/order",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"payment",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipt_id\":\"plan_2_1_1_8/1/2023_12:37:4\",\n    \"order_id\":\"order_L1avuIQV5i8xIF\",\n    \"payment_id\":\"pay_L1awAyUFynl8KX\",\n    \"user_id\":1,\n    \"amount\":60,\n    \"dateTime\":\"Sun Jan 08 2023 01:02:44 GMT+0530 (India Standard Time)\",\n    \"signature\":\"8edbe2b18cd2b090e457f24cfa5c222d18fcbb4cfa7238ee0665a63e2d22122f\",\n    \"plan_id\":2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/payment/saveTransaction",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"payment",
+								"saveTransaction"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
