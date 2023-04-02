@@ -22,6 +22,7 @@ const DefineAssociation = require("./db/associations");
 const { errorHandler, sentryErrorHandler } = require("./util");
 const allOtherRoutes = require("./routes");
 const { SocketHelper } = require("./helper/socketEmitter");
+// const transporter = require("./helper/nodemailerInit");
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -75,6 +76,11 @@ process.on("STOP", function(){
 server.listen(PORT, async () => {
   try {
     DefineAssociation()
+    // transporter.verify((err, success) => {
+    //   if (err) console.error(err);
+    //   console.log("=========================================");
+    //   console.log('Nodemailer connected.');
+    // });
     // await sequelize.sync({ force: true });
     await sequelize.sync({ alter: true });
     // await sequelize.authenticate();

@@ -26,12 +26,12 @@ const errorHandler = (err, req, res, next) => {
   if (status) {
     resData = {
       error: true,
-      msg: msg || "Something went wrong!",
+      msg: msg || message || "Something went wrong!",
     }
   } else {
     resData = {
       error: true,
-      msg: msg || "Something went wrong!",
+      msg: msg || message || "Something went wrong!",
       serverMsg: message
     }
   }

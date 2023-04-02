@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const Model = require('../db/model');
 const jwt = require('jsonwebtoken');
-const { otpTamplet, generateOTP } = require('../helper/otpTemplet')
-const nodemailer = require("nodemailer");
+const { otpTamplet, generateOTP } = require('../helper/otpTemplet');
+const transporter = require('../helper/nodemailerInit');
 
 exports.SignUp = async (req, res, next) => {
   let { name, email, password, role_id } = req.body
@@ -116,7 +116,7 @@ exports.SendOtp = async (req, res, next) => {
     throw { error: true, msg: "Email not found", status: 400 }
   }
 
-  let otp = generateOTP( )
+  let otp = generateOTP()
   let isOtpPresent = await Model.OtpToEmail.findOne({ where: { email } });
   let otpData = null
 
@@ -132,30 +132,31 @@ exports.SendOtp = async (req, res, next) => {
 
   if (otpData) {
 
-    // create reusable transporter object using the default SMTP transport
-    const transporter = nodemailer.createTransport({
-      host: process.env.SENDINBLUE_HOST,
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.SENDINBLUE_USER, // generated ethereal user
-        pass: process.env.SENDINBLUE_PASS // generated ethereal password
-      }
-    });
+    const sender = {
+      email: 'naveenmohanty3@gmail.com',
+      name: 'Solorder',
+    }
+    const receivers = [
+      {
+        email: email,
+      },
+    ]
 
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-      from: '"Solorder" <naveenmohanty3@gmail.com>', // sender address
-      to: email, // list of receivers
-      subject: "Reset password OTP", // Subject line
-      text: `Dear ${userData?.name || ""}, Your OTP is: ${otp || ""}`, // plain text body
-      html: otpTamplet(userData?.name, otp), // html body
-    });
-
-    if (info.messageId) {
+    let info = await transporter.sendTransacEmail({
+      sender: sender,
+      to: receivers,
+      subject: "Reset password OTP",
+      textContent: `Dear ${userData?.name || ""}, Your OTP is: ${otp || ""}`,
+      htmlContent: otpTamplet(userData?.name, otp),
+      params: {
+        role: 'Frontend',
+      },
+    })
+    if (info?.messageId) {
       res.json({
         error: false,
-        msg: "OTP send successfully to your email."
+        msg: "OTP send successfully to your email.",
+        data: info?.messageId || null
       })
     } else {
       res.status(400).json({
